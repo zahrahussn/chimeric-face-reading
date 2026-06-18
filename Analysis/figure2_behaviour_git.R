@@ -19,8 +19,8 @@ library(plyr)
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) # set working directory to location of script
 # rm(list=ls())
 #source("loadData_git.R")
-biasdat<-read.csv("csv/biasdat_clean.csv")
-langdat<-read.csv("csv/langdat_clean.csv")
+biasdat<-read.csv("../Data/biasdat_clean.csv")
+langdat<-read.csv("../Data/langdat_clean.csv")
 
 runModels<-1 # set to 0 to tinker with figures once models are run
 aggregateModel<-1 # aggregate or trialwise model; aggregate reported
@@ -59,6 +59,20 @@ if(runModels==1){
   
   print("STAT 2: FIG 2B")
   print(cor.test(tmpdat$pll, tmpdat$angle2))
+  
+  ## group analyses requested during review
+  ## test significance of bias against 0.5
+  t.test(tmpdat$pll[tmpdat$group=="1. English"], mu=0.5) # sig
+  t.test(tmpdat$pll[tmpdat$group=="2. Bilingual"], mu=0.5) # sig
+  t.test(tmpdat$pll[tmpdat$group=="3. Arabic"], mu=0.5) # ns
+  
+  ## pairwise comparisons controlled for Type-1 error
+  TukeyHSD(aov(pll~group, data=tmpdat)) # eng-arabic sig diff; other comparisons ns 
+  
+  ## with age as a covariate; age NS
+  lm1.2<-lm(pll~age+angle2, data=tmpdat)
+  Anova(lm1.2, type="II")
+  anova(lm1, lm1.2)
   
   ### Model 2, Figure 2C----
   if(aggregateModel==1){

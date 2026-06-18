@@ -20,8 +20,8 @@ yvar<-"fixY" # average fixation y position per trial
 
 ## load data and other----
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) # set working directory to location of script
-eyedat<-read.csv("csv/eyedat_clean.csv") # eye-tracking subjects only; 115 subjects
-oval<-read.csv("csv/ovalCoordinates.csv", header=FALSE)
+eyedat<-read.csv("../Data/eyedat_clean.csv") # eye-tracking subjects only; 115 subjects
+oval<-read.csv("./ovalCoordinates.csv", header=FALSE)
 # face images on which to superimpose data
 cface<-readPNG(sprintf("PNG/O%02d.PNG", faceNumber))
 lface<-readPNG(sprintf("PNG/LL%02d.PNG", faceNumber))

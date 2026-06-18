@@ -18,7 +18,7 @@ savePDF<-0
 doBins<-0
 numBins<-10
 numQuantiles<-10
-eyedat<-read.csv("csv/eyedat_clean.csv")
+eyedat<-read.csv("../Data/eyedat_clean.csv")
 eyedat$dwellTime<-eyedat$dwellTime/1000
 ymin<-0.1
 ymax<-0.9

@@ -1,4 +1,5 @@
 ## gaze bias measures for 115 eyetracking subjects; uses eyedat
+## note aoi is the variable `face' in the analyses reported
 
 library(rstudioapi)
 library(png)
@@ -22,8 +23,14 @@ doFig2<-0
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) # set working directory to location of script
 if(loadStuff==1){
   faceNumber<-69
-  eyedat<-read.csv("csv/eyedat_clean.csv")
-  oval<-read.csv("csv/ovalCoordinates.csv",
+  eyedat<-read.csv("../Data/eyedat_clean.csv")
+  # attach subject age to eyedata
+  eyedat <- eyedat %>%
+    left_join(
+      langdat %>% distinct(id, age),
+      by = "id"
+    )
+  oval<-read.csv("../Data/ovalCoordinates.csv",
                  header=FALSE)
   # face images on which to superimpose data
   cface<-readPNG(sprintf("PNG/O%02d.PNG", faceNumber))
@@ -50,15 +57,39 @@ if(doLM==1){
   ###### 1. FIG 3B X coordinates-----
   ### aggregate models 
   ## previous model comparisons justify dropping im and hemifield from these analyses
-  tmpdat<-aggregate(fixX~id+angle2+aoi, data=eyedat, mean)
+  tmpdat<-aggregate(fixX~id+angle2+aoi+age, data=eyedat, mean)
+  options(contrasts = c("contr.sum", "contr.poly"))
   lmx.0<-lmer(fixX~angle2*aoi+(1|id), data=tmpdat)
   print("x-coordinates")
   print(anova(lmx.0))
   print(effectsize(anova(lmx.0), partial=TRUE))
-  r.squaredGLMM(lmx.0)
+  # model intercept
+  print(summary(lmx.0))
+  print(confint(lmx.0, parm = "(Intercept)"))
+  # estimated marginal means for each face
+  print(emmeans(lmx.0, ~ aoi))
+  # r-squared
+  print(r.squaredGLMM(lmx.0))
   efx<-effect("angle2:aoi", lmx.0, xlevels=list(angle2=seq(-1, 1, length.out=nLangLevels)))
   efx<-data.frame(efx)
-  #Anova(lmx)
+  
+  ### this model parses compression from left bias:
+  tmpdat$screenPos <- c(1,0,-1)[tmpdat$aoi]
+  tmpdat$aoi2 <- factor(tmpdat$aoi,levels = c("1. left", "2. center", "3. right"))
+  contrasts(tmpdat$aoi2) <- cbind(
+    compression = c( 1,  0, -1),
+    middle      = c(1,  -2, 1)
+  )
+  m_orth <- lmer(fixX ~ angle2 * aoi2 + (1 | id),data = tmpdat)
+  summary(m_orth)
+  confint(m_orth, parm = "(Intercept)")
+  confint(m_orth, parm = "aoi2compression")
+  confint(m_orth, parm = "angle2:aoi2compression")
+  
+  ### including age as covariate
+  lmx.0.age<-lmer(fixX~age+angle2*aoi+(1|id), data=tmpdat)
+  print(Anova(lmx.0.age, type="II"))
+  print(anova(lmx.0, lmx.0.age))
   
   #### 2. FIG 3C Y coordinates-----
   tmpdat<-aggregate(fixY~id+angle2+aoi, data=eyedat, mean)
@@ -299,7 +330,7 @@ plot(efff$angle2, efff$fit, xlim=c(-1,1), ylim=c(1,3), axes=FALSE, pch=19,
      xlab="", ylab="")
 axis(side=1, at=seq(-1,1, length.out=3), cex.axis=cexaxis, lwd=1, tick="TRUE", lwd.ticks=1)
 axis(side=2, at=c(1, 2,3), cex.axis=cexaxis, las=2)
-mtext(side=2, "First saccade number", line=2.5,cex=cexaxislabel)
+mtext(side=2, "First fixation", line=2.5,cex=cexaxislabel)
 mtext(side=3, line=1.3, 'D', adj=-0.2, cex=cexfigurelabel)
 
 plotdat<-ddply(efff, .(aoi), function(plotdat){
