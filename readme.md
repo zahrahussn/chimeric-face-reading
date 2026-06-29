@@ -7,9 +7,9 @@
  - ovalCoordinates.csv: used for some plots
 
 ### Data folder contains compiled data files
-- biasdat_clean.csv: single-trial bias data
+- biasdat_clean.csv: single-trial behaviour data
 - langdata_clean.csv: language and handedness data
-- eyedat_clean.csv: eyetracking + behaviour for 115 eye-tracking subjects
+- eyedat_clean.csv: single-trial eyetracking + behaviour data for 115 eye-tracking subjects
 
 ### Materials folder contains the study materials
  - Chimeric Face_Eye Tracker.py is for the experimental task with eyetracking

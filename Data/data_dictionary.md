@@ -1,0 +1,69 @@
+
+### biasdat_clean.csv
+ - **id**: participant code
+ - **face**:  number referring to the face stimulus file names 
+ - **im**:  target face version (Intact or Mirror reversed)
+ - **hemifield**: hemifield of presentation of the LL face
+ - **response**: chosen choice face (left or right)
+ - **rt**: response time in seconds
+ - **correct**: 1 = LL chosen; 0 = RR chosen
+ - **location**: location of experiment: online or in person (jesup)
+ - **radius**: absolute fluency (radial distance from the origin in figure 2a)
+ - **angle**: language score of participant between 0 and 90 degrees (0 = monolingual English; 90 = monolingual Arabic; 45 = bilingual)
+ - **cols**: participant symbol background colour for plotting figure 2
+ - **pch**: participant symbol for plotting figure 2
+ - **col1**: participant symbol outline colour for plotting figure 2
+ - **angle2**: language score of participant normalised between -1 and 1 (0 = bilingual)
+ - **group**: language group of participant
+ - **gcol**: group colour for plotting
+ 
+### eyedat_clean.csv
+ - **id**: participant code
+ - **TrialNumber**: trial number
+ - **im**: target face version (Intact or Mirror reversed)
+ - **faceNumber**: file name for the face stimulus (O = original + face number) 
+ - **hemifield**: hemifield of presentation of the LL face
+ - **aoi**: area of interest (1 = left choice face, 2 = center target face, 3 = right choice face)
+ - **dwellTime**: total dwell time in AOI in milliseconds
+ - **nFixations**: number of fixations in AOI
+ - **nDwells**: number of groups of consecutive fixations in the AOI
+ - **fixX**: average X fixation coordinates in AOI (weighted by fixation durations)
+ - **fixY**: average Y fixation coordinate in AOI (weighted by fixation durations) 
+ - **firstFixNum**: number of the first fixation to the AOI in the sequence of fixations
+ - **lastFixNum**: number of the last fixation to the AOI in the sequence of fixations
+ - **fix0X**: X coordinate of fixation at trial start (fixation 0)
+ - **fix0Y**: Y coordinate of fixation at trial start (fixation 0) 
+ - **fix1X**: X coordinate of first fixation after start of trial (fixation 1)
+ - **fix1Y**: Y coordinate of first fixation after start of trial (fixation 1)
+ - **lastFixX**: X coordinate of last fixation in trial
+ - **lastFixY**: Y coordinate of last fixation in trial
+ - **face**: chimera type: LL = Left-Left, RR = Right-Right or target = Original
+ - **hem**: hemifield of presentation of the LL face
+ - **angle**: language score of participant between 0 and 90 degrees (0 = monolingual English; 90 = monolingual Arabic; 45 = bilingual)
+ - **group**: language group of participant
+ - **col**: participant symbol colour for plotting
+ - **angle2**: language score of participant normalised between -1 and 1 (0 = bilingual)
+ - **correct**: 1 = LL chosen; 0 = RR chosen
+
+### langdat_clean.csv
+ - **id**: participant code
+ - **location**:  location of experiment: online or in person (jesup)
+ - **meanEngProf**: mean English proficiency score (across items 13 to 16 in language questionaire)
+ - **meanEngFreq**: mean English usage frequency score (across items 21 to 24 in language questionaire)
+ - **meanArbProf**: mean Arabic proficiency score (across items 17 to 20 in language questionaire)
+ - **meanArbFreq**: mean Arabic usage frequency score (across items 25 to 28 in language questionaire)
+ - **engReadProf**: raw score for English reading proficiency (item 15 in language questionaire)
+ - **engReadFreq**: raw score for English reading frequency (item 24 in language questionaire)
+ - **arbReadProf**: raw score for Arabic reading proficiency (item 19 in language questionaire)
+ - **arbReadFreq**: raw score for Arabic reading frequency (item 28 in language questionaire)
+ - **hand**: handedness score (1 = left to 5 = right), averaged over items 31 to 34
+ - **age**: age in years 
+ - **sex**: Male or Female
+ - **engComp**: English composite proficiency score
+ - **arbComp**: Arabic composite proficiency score 
+ - **radius**: absolute fluency (radial distance from the origin in figure 2a)
+ - **angle**: language score of participant between 0 and 90 degrees (0 = monolingual English; 90 = monolingual Arabic; 45 = bilingual)
+ - **cols**: participant symbol background colour for plotting figure 2
+ - **col1**: participant symbol outline colour for plotting figure 2
+ - **pch**: participant symbol for plotting figure 2
+ - **group**: language group of participant
