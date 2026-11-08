@@ -7,6 +7,7 @@ library(effectsize)
 library(MuMIn) # r.squared
 library(car)
 library(plyr)
+library(emmeans)
 
 library(extrafont)
 loadfonts()
