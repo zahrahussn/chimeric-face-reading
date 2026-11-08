@@ -8,19 +8,21 @@ library(MuMIn) # r.squared
 library(car)
 library(plyr)
 
-# library(extrafont)
-# loadfonts()
-# library(wesanderson)
-# library(scales) # alpha
-# library(tidyr)
-# library(BurStMisc)
-# library(tidyverse) # do this or langdat gets messed up
+library(extrafont)
+loadfonts()
+library(wesanderson)
+library(scales) # alpha
+library(tidyr)
+library(BurStMisc)
+library(tidyverse) # do this or langdat gets messed up
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) # set working directory to location of script
 # rm(list=ls())
 #source("loadData_git.R")
 biasdat<-read.csv("../Data/biasdat_clean.csv")
 langdat<-read.csv("../Data/langdat_clean.csv")
+biasdat <- biasdat %>%
+  left_join(langdat %>% select(id, age), by = "id")
 
 runModels<-1 # set to 0 to tinker with figures once models are run
 aggregateModel<-1 # aggregate or trialwise model; aggregate reported
@@ -48,7 +50,7 @@ if(runModels==1){
 
   #### Model 1, Figure 2B------
   # simple linear regression of mean bias on language score 
-  tmpdat<-aggregate(correct~id+group+angle2+radius+cols+col1+pch, mean, 
+  tmpdat<-aggregate(correct~id+group+angle2+radius+cols+col1+pch+age, mean, 
                     data=biasdat[biasdat$radius>rad,])
   tmpdat$pll<-tmpdat$correct
   lm1<-lm(pll~angle2, data=tmpdat)
@@ -179,8 +181,9 @@ text(0, 1.02*ymin, "Bidirectional", col="darkgoldenrod", cex=textcex)
 text(0.9, 1.02*ymin, "Arabic", col="#F21A00", cex=textcex)
 
 par(xpd=TRUE)
-text(0.5, 1.05*ymax, paste("r = ", round(test1$estimate,2), 
-                           ", p = ", round(test1$p.value,4), sep="" ), cex=textcex)
+text(0.5, 1.05*ymax, paste("r = ", round(test1$estimate, 2),
+                           ", p = ", format(round(test1$p.value, 4), nsmall = 4, scientific = FALSE),
+                           sep = ""), cex = textcex)
 par(xpd=FALSE)
 ## 2C-D BEHAVIOUR DISCRETE, USING SINGLE TRIALS-----
 par(mar=c(4.5,16,5.5,16))
@@ -261,7 +264,10 @@ for(i in 1:1){
   seprop<-tapply(biasdat$correct, biasdat$group, sd)/sqrt(table(biasdat$group)/4)
   plotrix::plotCI(meanangle, meanprop, ui=meanprop+seprop, li=meanprop-seprop, add=TRUE, 
                   col="white",
-                  scol=c(scales::alpha(col1, 0.7), scales::alpha(col2, 0.7), scales::alpha(col3, 0.7)), sfrac=0.002)
+                  scol=c(scales::alpha(col1, 0.7), 
+                         scales::alpha(col2, 0.7), 
+                         scales::alpha(col3, 0.7)), 
+                  sfrac=0.002)
   points(meanangle, meanprop, pch=21, cex=ptcex2, col=c(col1, col2, col3), 
          bg=c(scales::alpha(col1,alphaval), 
               scales::alpha(col2,alphaval), scales::alpha(col3, alphaval)), lwd=2)
