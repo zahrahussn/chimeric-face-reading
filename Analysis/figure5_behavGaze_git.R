@@ -9,7 +9,7 @@ library(effects)
 library(lmerTest)
 library(gplots)
 library(MuMIn) #(conditional R-squared for fixed and random effects variance)
-#rm(list=ls())
+rm(list=ls())
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) # set working directory to location of script
 
@@ -45,9 +45,15 @@ if(doModels==1){
   
   lm.target<-glmer(correct~angle2*fixX+(1|id), data=tar, family="binomial",
                    control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=10000)))
-  print("bias~fixX")
+  print("figure 5a: bias~fixX")
   print(Anova(lm.target, type='III'))
-  
+  print("odds ratio - x coordinate")
+  print(odds.fixX<-exp(coef(summary(lm.target))[3]))
+  print("odds ratio - language score")
+  print(odds.angle2<-exp(coef(summary(lm.target))[2]))
+  print("95% CIs on odds ratios")
+  print(exp(confint(lm.target, parm="beta_", method="Wald")))
+
   # for main effect of fixation
   efx.target<-effect("fixX", lm.target,
                      xlevels=list(fixX=round(seq(-2,2, length.out=9),2)))
@@ -105,9 +111,16 @@ if(doModels==1){
                            xlevels=list(nfixdiff=seq(xmin,xmax, length.out=10),
                                         angle2=seq(-1, 1, length.out=3)))
   efnfixdiffangle<-data.frame(ef.nfixdiffangle)
-  print("bias~nfixdiff")
+  print("figure 5b: bias~nfixdiff")
   print(Anova(lm.nfix, type='III'))
-
+  # odds ratios below not reported
+  # print(odds.nfixdiff<-exp(coef(summary(lm.nfix))[2]))
+  # print(odds.nfixsumscaled<-exp(coef(summary(lm.nfix))[3]))
+  # print(odds.angle2<-exp(coef(summary(lm.nfix))[4]))
+  # print(odds.fixdiff.fixsum<-exp(coef(summary(lm.nfix))[5]))
+  # print(odds.fixdiff.angle2<-exp(coef(summary(lm.nfix))[6]))
+  # # 95% CIs on odds ratios
+  # exp(confint(lm.nfix, parm="beta_", method="Wald"))
   
    ### 3. first & last fixations------
   
@@ -142,6 +155,19 @@ if(doModels==1){
   ef3lm1<-data.frame(ef3.lm1)
   efallm1<-data.frame(efall.lm1)
 
+  print("figure 5c: bias~firstfixyn_lastfixyn")
+  print(Anova(lm.saccade, type='III'))
+  print("figure 5c: odds ratio first fix")
+  print(odds.firstfixyn<-exp(coef(summary(lm.saccade))[3]))
+  print("figure 5c: odds ratio last fix")
+  print(odds.lastfixyn<-exp(coef(summary(lm.saccade))[4]))
+  print("figure 5c: odds ratio lang:first fix")
+  print(odds.angle2.firstfixyn<-exp(coef(summary(lm.saccade))[5]))
+  print("figure 5c: odds ratio lang: last fix")
+  print(odds.angle2.lastfixyn<-exp(coef(summary(lm.saccade))[6]))
+  print("95% CIs on odds ratios")
+  print(exp(confint(lm.saccade, parm="beta_", method="Wald")))
+  
 }
 
 ### PLOTTING PARAMETERS ------
@@ -185,7 +211,7 @@ if(doBins==0){
   breaks <- quantile(tar$fixX, probs = seq(0, 1, length.out = numQuantiles + 1), 
                      na.rm = TRUE, type = 7)
   tar <- tar %>%
-   mutate(fixXQ = ntile(fixX, numQuantiles))
+   mutate(fixXQ = dplyr::ntile(fixX, numQuantiles))
   #plot(tar$fixXQ, tar$fixX)
   xMean<-tapply(tar$fixX, tar$fixXQ, mean)
   corrMean<-tapply(tar$correct, tar$fixXQ, mean)
@@ -214,7 +240,7 @@ plotdat<-dlply(efalldat.target, .(angle2), function(plotdat){
           xadj<--0
         }
     
-     plotCI(plotdat$fixX+xadj, plotdat$fit, ui=plotdat$fit+plotdat$se, 
+     plotrix::plotCI(plotdat$fixX+xadj, plotdat$fit, ui=plotdat$fit+plotdat$se, 
             li=plotdat$fit-plotdat$se, 
             col="white", scol=scales::alpha(thiscol,ptalpha),  sfrac=0, add=TRUE)  
      points(plotdat$fixX+xadj, plotdat$fit, col=thiscol, bg=scales::alpha(thiscol,ptalpha),  
@@ -280,7 +306,7 @@ plotdat<-dlply(efalldat.target, .(angle2), function(plotdat){
        breaks <- quantile(plotdat$nfixdiff, 
                           probs = seq(0, 1, length.out = numQuantiles + 1), na.rm = TRUE, type = 7)
        plotdat <- plotdat %>%
-         mutate(nfixdiffQ = ntile(nfixdiff, numQuantiles))
+         mutate(nfixdiffQ = dplyr::ntile(nfixdiff, numQuantiles))
        #plot(tar$fixXQ, tar$fixX)
        meanx<-tapply(plotdat$nfixdiff, plotdat$nfixdiffQ, mean)
        # print(meanx)
@@ -311,9 +337,9 @@ plotdat<-dlply(efalldat.target, .(angle2), function(plotdat){
             c("LL", "RR"), 
             title="Last saccade")
      
-     plotCI(c(0,1), ef3lm1$fit[2:1], ui=ef3lm1$upper[2:1], 
+     plotrix::plotCI(c(0,1), ef3lm1$fit[2:1], ui=ef3lm1$upper[2:1], 
              li=ef3lm1$lower[2:1], add=TRUE, sfrac=0, pch=21, pt.bg="grey", scol="black", cex=ptcex)
-     plotCI(c(0,1), ef3lm1$fit[4:3], ui=ef3lm1$upper[4:3], 
+     plotrix::plotCI(c(0,1), ef3lm1$fit[4:3], ui=ef3lm1$upper[4:3], 
             li=ef3lm1$lower[4:3], add=TRUE, sfrac=0, pch=21, pt.bg="white", scol="black", cex=ptcex)
      
      plotdat<-dlply(efallm1, .(angle2), function(plotdat){
@@ -329,12 +355,12 @@ plotdat<-dlply(efalldat.target, .(angle2), function(plotdat){
          xadj<-0.07
        }
        
-       plotCI(c(0+xadj, 1+xadj), plotdat$fit[2:1], ui=plotdat$fit[2:1]+plotdat$se[2:1], 
+       plotrix::plotCI(c(0+xadj, 1+xadj), plotdat$fit[2:1], ui=plotdat$fit[2:1]+plotdat$se[2:1], 
               li=plotdat$fit[2:1]-plotdat$se[2:1], 
               scol=scales::alpha(thiscol, 0.5), 
               pch=19, col="white", sfrac=0, add=TRUE)
        
-       plotCI(c(0+xadj, 1+xadj), plotdat$fit[4:3], ui=plotdat$fit[4:3]+plotdat$se[4:3], 
+       plotrix::plotCI(c(0+xadj, 1+xadj), plotdat$fit[4:3], ui=plotdat$fit[4:3]+plotdat$se[4:3], 
               li=plotdat$fit[4:3]-plotdat$se[4:3], 
               scol=scales::alpha(thiscol,0.5), 
               pch=19, col="white", sfrac=0, add=TRUE)

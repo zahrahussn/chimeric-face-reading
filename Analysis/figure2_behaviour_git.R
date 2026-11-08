@@ -88,8 +88,10 @@ if(runModels==1){
     efdat<-data.frame(ef)
     
     print("STAT 3: FIG 2C")
-    print(Anova(lm2.0, type="III"))
-    
+    print(anova(lm2.0, type="III"))
+    print(effectsize(anovalm2.0, partial=TRUE))
+    print(emmeans(lm2.0, ~ angle2,
+            at = list(angle2 = c(-1, 0, 1))))
     
   } else{
     ## logit model 
