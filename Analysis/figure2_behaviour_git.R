@@ -84,7 +84,6 @@ if(runModels==1){
     lm2.0<-lmer(correct~angle2*im*hemifield+(1|id), data=tmpdat2)
     anovalm2.0<-anova(lm2.0)
     effectsize(anovalm2.0, partial=TRUE)
-    r.squaredGLMM(lm2.0)
     ef<-effect("angle2:im:hemifield", lm2.0,xlevels=list(angle2=seq(xmin, xmax, length.out=3)))
     efdat<-data.frame(ef)
     
@@ -93,6 +92,7 @@ if(runModels==1){
     print(effectsize(anovalm2.0, partial=TRUE))
     print(emmeans(lm2.0, ~ angle2,
             at = list(angle2 = c(-1, 0, 1))))
+    print(r.squaredGLMM(lm2.0))
     
   } else{
     ## logit model 

@@ -64,17 +64,19 @@ if(doLM==1){
   tmpdat<-aggregate(fixX~id+angle2+aoi+age, data=eyedat, mean)
   options(contrasts = c("contr.sum", "contr.poly"))
   lmx.0<-lmer(fixX~angle2*aoi+(1|id), data=tmpdat)
-  print("x-coordinates")
-  print(anova(lmx.0))
-  print(effectsize(anova(lmx.0), partial=TRUE))
+  print("----X COORDINATES - FIGURE 4B----")
   # model intercept
+  print("model intercept and CI")
   print(summary(lmx.0))
   print(confint(lmx.0, parm = "(Intercept)"))
+  print("anova")
+  print(anova(lmx.0))
+  print(effectsize(anova(lmx.0), partial=TRUE))
   # estimated marginal means for each face
   print(emmeans(lmx.0, ~ aoi))
   # estimated marginal means for each language for each face
-  emmeans(lmx.0, ~ angle2 | aoi,
-          at = list(angle2 = c(-1, 0, 1)))
+  print(emmeans(lmx.0, ~ angle2 | aoi,
+          at = list(angle2 = c(-1, 0, 1))))
   # r-squared
   print(r.squaredGLMM(lmx.0))
   efx<-effect("angle2:aoi", lmx.0, xlevels=list(angle2=seq(-1, 1, length.out=nLangLevels)))
@@ -82,38 +84,48 @@ if(doLM==1){
   
   ### including age as covariate
   lmx.0.age<-lmer(fixX~age+angle2*aoi+(1|id), data=tmpdat)
-  print(Anova(lmx.0.age, type="II"))
+  print("lmer model with age as a covariate")
+  print(anova(lmx.0.age, type="II"))
   print(anova(lmx.0, lmx.0.age))
+  print("-----------------------")
   
   #### 2. FIG 4C Y coordinates-----
   tmpdat<-aggregate(fixY~id+angle2+aoi, data=eyedat, mean)
   lmy.0<-lmer(fixY~angle2*aoi+(1|id), data=tmpdat)
-  print("y-coordinates")
+  print("----Y COORDINATES - FIGURE 4C----")
+  print("model intercept and CI")
+  print(summary(lmy.0))
+  print(confint(lmy.0, parm = "(Intercept)"))
+  print("anova")
   print(anova(lmy.0))
   print(effectsize(anova(lmy.0), partial=TRUE))
-  r.squaredGLMM(lmy.0)
+  # estimated marginal means for each face
+  print(emmeans(lmy.0, ~ aoi))
+  print(r.squaredGLMM(lmy.0))
   efy<-effect("angle2:aoi", lmy.0, xlevels=list(angle2=seq(-1, 1, length.out=nLangLevels)))
   efy<-data.frame(efy)
   
   #### 3. FIG 4D First fixation-----
   tmpdat<-aggregate(firstFixNum~id+angle2+aoi, data=eyedat[eyedat$aoi !="2. center",], mean)
   lmff.0<-lmer(firstFixNum~angle2*aoi+(1|id), data=tmpdat)
-  print("first fix")
+  print("-----------------------")
+  print("----FIRST FIXATION - FIGURE 4D----")
   print(anova(lmff.0))
   print(effectsize(anova(lmff.0), partial=TRUE))
   ef1<-effect("angle2:aoi", lmff.0, xlevels=list(angle2=seq(-1,1, length.out=10)))
   efff<-data.frame(ef1)
-  r.squaredGLMM(lmff.0)
+  print(r.squaredGLMM(lmff.0))
   
   #### 4. FIG 4E N fixations-----
   tmpdat<-aggregate(nFixations~id+angle2+aoi, data=eyedat[eyedat$aoi !="2. center",], mean)
   lmnfix.0<-lmer(nFixations~angle2*aoi+(1|id), data=tmpdat)
-  print("n. fixations")
+  print("-----------------------")
+  print("----N FIXATIONS - FIGURE 4E----")
   print(anova(lmnfix.0))
   print(effectsize(anova(lmnfix.0), partial=TRUE))
   efnfix<-effect("angle2:aoi", lmnfix.0, xlevels=list(angle2=seq(-1,1, length.out=10)))
   nfixeffect<-data.frame(efnfix)
-  r.squaredGLMM(lmnfix.0)
+  print(r.squaredGLMM(lmnfix.0))
 }
 
 ### PLOTTING PARAMETERS ------
